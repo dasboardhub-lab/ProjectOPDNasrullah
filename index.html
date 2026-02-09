@@ -375,7 +375,7 @@
             display: block; 
             color: var(--text-muted); 
             font-size: 0.7rem; 
-            margin-bottom: 4px; 
+            margin-top: 4px; /* Ubah margin-bottom jadi margin-top agar jarak rapi */
             text-transform: uppercase; 
             font-weight: 700;
             letter-spacing: 0.5px;
@@ -700,12 +700,12 @@
                     <div class="org-card highlight"><strong>Nasrullah</strong><small>SSC (Acting)</small></div>
                     <div class="org-line"></div>
                     <div class="org-team-grid">
-                        <div class="org-team-card"><small>SS MAKASSAR SELATAN</small><strong>NURMAN</strong></div>
-                        <div class="org-team-card"><small>SS MAKASSAR BARAT</small><strong>ABRAR</strong></div>
-                        <div class="org-team-card"><small>SS MAKASSAR TIMUR</small><strong>JAMAL</strong></div>
-                        <div class="org-team-card"><small>SS SOAT0</small><strong>FAHMI</strong></div>
-                        <div class="org-team-card"><small>SS BTMR0</small><strong>HANAFI</strong></div>
-                        <div class="org-team-card"><small>SS BGOY0</small><strong>SABAR</strong></div>
+                        <div class="org-team-card"><strong>NURMAN</strong><small>SS MAKASSAR SELATAN</small></div>
+                        <div class="org-team-card"><strong>ABRAR</strong><small>SS MAKASSAR BARAT</small></div>
+                        <div class="org-team-card"><strong>JAMAL</strong><small>SS MAKASSAR TIMUR</small></div>
+                        <div class="org-team-card"><strong>FAHMI</strong><small>SS SOAT0</small></div>
+                        <div class="org-team-card"><strong>HANAFI</strong><small>SS BTMR0</small></div>
+                        <div class="org-team-card"><strong>SABAR</strong><small>SS BGOY0</small></div>
                     </div>
                 </div>
             </div>
@@ -1449,11 +1449,11 @@
                 paretoChart = new Chart(ctxPareto, {
                     type: 'bar',
                     data: {
-                        labels: ['REG', 'SD', 'ECO', 'BIG', 'ND'],
+                        labels: ['REG', 'SD', 'ECO', 'ND', 'BIG'],
                         datasets: [
                             {
                                 label: 'Total Kontribusi Masalah',
-                                data: [900, 260, 40, 0, 0],
+                                data: [555, 407, 11, 3, 0],
                                 backgroundColor: '#BF007F',
                                 borderColor: '#BF007F',
                                 borderWidth: 1,
@@ -1469,7 +1469,7 @@
                             {
                                 type: 'line',
                                 label: 'Persentase Kumulatif (%)',
-                                data: [75.00, 96.67, 100.00, 100.00, 100.00],
+                                data: [56.86, 98.56, 99.69, 100.00, 100.00],
                                 borderColor: '#FFDD00',
                                 backgroundColor: '#FFDD00',
                                 borderWidth: 3,
