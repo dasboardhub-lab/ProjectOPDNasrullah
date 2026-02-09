@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Strategic Proposal: SLA Pickup Improvement - Nasrullah</title>
+    
+    <!-- Fonts: Inter (Professional Font) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons: FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js & DataLabels Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
+    <!-- PptxGenJS (Library for PPT Export) -->
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+
+    <style>
+        /* --- CSS VARIABLES (THEMING ENGINE) --- */
+        :root {
+            /* Light Mode (Default) */
+            --bg-body: #F1F5F9;      /* Slate 100 */
+            --bg-surface: #FFFFFF;
+            --bg-sidebar: #FFFFFF;
+            --text-main: #1E293B;    /* Slate 800 */
+            --text-muted: #64748B;   /* Slate 500 */
+            --border-color: #E2E8F0; /* Slate 200 */
+            
+            --primary: #2563EB;      /* Royal Blue */
+            --primary-glow: rgba(37, 99, 235, 0.15);
+            --accent: #10B981;       /* Emerald Green (Success/Growth) */
+            --danger: #EF4444;       /* Red */
+            
+            /* Pareto Specific Colors */
+            --pareto-bar: #BF007F;
+            --pareto-line: #FFDD00;
+            
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-sidebar: 4px 0 24px rgba(0,0,0,0.03);
+            
+            --chart-grid: #E2E8F0;
+            --tree-line-color: #94a3b8;
+        }
+
+        /* Dark Mode Override */
+        [data-theme="dark"] {
+            --bg-body: #0F172A;      /* Slate 900 */
+            --bg-surface: #1E293B;   /* Slate 800 */
+            --bg-sidebar: #0F172A;
+            --text-main: #F8FAFC;    /* Slate 50 */
+            --text-muted: #94A3B8;   /* Slate 400 */
+            --border-color: #334155; /* Slate 700 */
+            
+            --primary: #60A5FA;      /* Lighter Blue for Dark Mode */
+            --primary-glow: rgba(96, 165, 250, 0.15);
+            --accent: #34D399;       /* Lighter Emerald */
+            --danger: #F87171;
+            
+            --shadow-card: none;
+            --shadow-sidebar: 1px 0 0 rgba(255,255,255,0.05);
+            
+            --chart-grid: #334155;
+            --tree-line-color: #475569;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+
+        body {
+            margin: 0;
+            font-family: "Inter", sans-serif;
+            color: var(--text-main);
+            background-color: var(--bg-body);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- 1. SIDEBAR NAVIGATION --- */
+        aside {
+            width: 280px;
+            background: var(--bg-sidebar);
+            height: 100%;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 10;
+            box-shadow: var(--shadow-sidebar);
+        }
+
+        .logo-area {
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-text { 
+            font-weight: 800; 
+            color: var(--primary); 
+            font-size: 1.25rem; 
+            letter-spacing: -0.5px; 
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 15px;
+            overflow-y: auto;
+        }
+
+        .nav-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            text-align: left;
+            padding: 14px 20px;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-radius: 8px;
+            font-family: "Inter", sans-serif;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+        }
+
+        .nav-btn.active {
+            background-color: var(--primary-glow);
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .nav-btn i { width: 24px; text-align: center; font-size: 1.1rem; }
+
+        .theme-toggle-area {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .theme-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+        .theme-btn:hover { border-color: var(--primary); }
+
+        /* --- 2. MAIN CONTENT --- */
+        main {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        .content-section {
+            display: none;
+            padding: 40px 6%;
+            max-width: 1400px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .content-section.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- TYPOGRAPHY & ELEMENTS --- */
+        h1 { font-size: 3rem; color: var(--text-main); margin-bottom: 10px; letter-spacing: -1.5px; font-weight: 800; }
+        h2 { 
+            font-size: 1.8rem; 
+            color: var(--text-main); 
+            margin-bottom: 30px; 
+            font-weight: 700; 
+            letter-spacing: -0.5px;
+            border-left: 4px solid var(--primary);
+            padding-left: 15px;
+        }
+        h3 { color: var(--text-main); margin-bottom: 15px; font-size: 1.2rem; font-weight: 600; }
+        p, li { line-height: 1.7; color: var(--text-muted); }
+        strong { color: var(--text-main); font-weight: 600; }
+
+        .card {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+        /* --- ANALYSIS GRID --- */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+        
+        @media (max-width: 1024px) {
+            .analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* --- QCDSMP CARD STYLES --- */
+        .qcd-card {
+            padding: 25px;
+            border-radius: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .qcd-card:hover { transform: translateY(-5px); }
+        .qcd-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 12px;
+            border-radius: 12px;
+        }
+        .qcd-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 10px; color: var(--text-main); }
+        .qcd-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+        
+        /* Color variants for QCDSMP */
+        .qcd-q .qcd-icon { background: rgba(37, 99, 235, 0.1); color: #2563EB; }
+        .qcd-c .qcd-icon { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+        .qcd-d .qcd-icon { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
+        .qcd-s .qcd-icon { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .qcd-m .qcd-icon { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+        .qcd-p .qcd-icon { background: rgba(236, 72, 153, 0.1); color: #EC4899; }
+
+        /* --- COMPONENTS --- */
+        .btn-primary {
+            padding: 16px 40px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .badge {
+            background: var(--primary-glow);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        /* --- TABLE STYLING --- */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto; 
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+            white-space: normal;
+            vertical-align: top;
+        }
+
+        .data-table th {
+            background-color: var(--bg-body);
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            vertical-align: bottom;
+        }
+        
+        .data-table tr:hover {
+            background-color: var(--bg-body);
+        }
+        
+        .status-danger { color: var(--danger); font-weight: 700; }
+        .status-success { color: var(--accent); font-weight: 700; }
+        .status-neutral { color: var(--text-muted); font-style: italic; }
+
+        /* --- SPECIFIC SECTION STYLES --- */
+        /* Profile */
+        .profile-hero {
+            display: flex; gap: 30px; align-items: center; margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color); padding-bottom: 30px;
+        }
+        .avatar-circle {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem; color: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .info-table { width: 100%; border-collapse: collapse; }
+        .info-table td { padding: 12px 0; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+        .info-table td:first-child { color: var(--text-muted); width: 150px; }
+
+        /* Timeline */
+        .timeline { border-left: 2px solid var(--border-color); padding-left: 25px; margin-left: 10px; }
+        .t-item { position: relative; padding-bottom: 30px; }
+        .t-item::before {
+            content: ''; position: absolute; left: -31px; top: 5px;
+            width: 10px; height: 10px; background: var(--bg-surface);
+            border: 2px solid var(--primary); border-radius: 50%;
+        }
+        .t-year { font-weight: 700; color: var(--primary); font-size: 0.9rem; }
+        .t-role { font-weight: 600; font-size: 1.1rem; color: var(--text-main); margin-top: 4px; }
+
+        /* Org Chart */
+        .org-flow { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px 0; }
+        .org-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            padding: 15px 30px; border-radius: 12px; text-align: center; min-width: 200px;
+            position: relative;
+        }
+        .org-card.highlight {
+            border-color: var(--primary); background: var(--primary-glow);
+        }
+        .org-card small { color: var(--text-muted); display: block; font-size: 0.8rem; margin-top: 4px; text-transform: uppercase;}
+        .org-line { width: 2px; height: 20px; background: var(--border-color); }
+        
+        .org-team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; width: 100%; margin-top: 10px; }
+        .org-team-card {
+            background: var(--bg-body); padding: 10px; border-radius: 8px; text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        /* Penambahan CSS agar Nama SS dan Nama SSL turun ke bawah (Block) */
+        .org-team-card small { 
+            display: block; 
+            color: var(--text-muted); 
+            font-size: 0.7rem; 
+            margin-bottom: 4px; 
+            text-transform: uppercase; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .org-team-card strong { 
+            display: block; 
+            font-size: 0.95rem; 
+            color: var(--text-main);
+        }
+
+        /* KPI & Strategy */
+        .stat-box { text-align: center; padding: 40px 20px; border-radius: 16px; background: var(--bg-surface); border: 1px solid var(--border-color); }
+        .stat-val { font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 10px 0; letter-spacing: -2px; }
+        .stat-label { color: var(--text-muted); font-weight: 600; letter-spacing: 1px; font-size: 0.8rem; text-transform: uppercase; }
+
+        .phase-box {
+            border-left: 4px solid var(--border-color); padding-left: 20px; margin-bottom: 20px;
+        }
+        .phase-box.p1 { border-color: var(--primary); }
+        .phase-box.p2 { border-color: var(--accent); }
+        .phase-box.p3 { border-color: var(--text-main); }
+
+        /* --- TREE DIAGRAM STYLES --- */
+        .tree-wrapper {
+            overflow-x: auto;
+            padding: 40px;
+            background: var(--bg-surface);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-top: 30px;
+        }
+        .tree {
+            display: flex;
+            align-items: center;
+            min-width: 800px;
+        }
+        .tree-root {
+            padding: 15px 30px;
+            background: var(--danger);
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-right: 60px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+        .tree-root::after {
+            content: '';
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            width: 60px;
+            height: 2px;
+            background: #cbd5e1;
+        }
+        .tree-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+        .tree-branches::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 30px;
+            bottom: 30px;
+            width: 2px;
+            background: #cbd5e1;
+        }
+
+        .tree-node {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .tree-node::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            width: 30px;
+            height: 2px;
+            background: #cbd5e1;
+        }
+
+        .node-category {
+            width: 140px;
+            padding: 10px;
+            background: var(--bg-body);
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            margin-right: 30px;
+            position: relative;
+        }
+        .node-category::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background: #cbd5e1;
+        }
+
+        .node-leaves {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-left: 2px solid #cbd5e1;
+            padding-left: 15px;
+        }
+        .leaf {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        /* --- IMPLEMENTATION GALLERY STYLES --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            background: var(--bg-body);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .gallery-item:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-glow);
+        }
+        .gallery-icon { font-size: 2rem; margin-bottom: 10px; }
+        
+        /* Tambahan CSS untuk Preview Foto */
+        .gallery-img-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none; /* Sembunyikan default */
+        }
+        .gallery-item.has-image {
+            border-style: solid;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        .gallery-item.has-image .gallery-content {
+            display: none;
+        }
+        .gallery-item.has-image .gallery-img-preview {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; }
+            aside { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .nav-menu { display: none; }
+            .logo-area { justify-content: space-between; }
+            .theme-toggle-area { padding: 10px; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            h1 { font-size: 2.2rem; }
+            .data-table { font-size: 12px; }
+            .data-table th, .data-table td { padding: 4px 2px; }
+            
+            .tree-wrapper { padding: 20px 10px; overflow-x: auto; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="logo-area">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-layer-group" style="font-size:1.5rem; color:var(--primary);"></i>
+                <div class="logo-text">PROJECT SLA</div>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <button class="nav-btn active" onclick="switchTab('hero')">
+                <i class="fas fa-home"></i> Overview
+            </button>
+            <button class="nav-btn" onclick="switchTab('profile')">
+                <i class="fas fa-user-tie"></i> Leader Profile
+            </button>
+            <button class="nav-btn" onclick="switchTab('analysis')">
+                <i class="fas fa-chart-bar"></i> Background Project
+            </button>
+            <button class="nav-btn" onclick="switchTab('problem-analysis')">
+                <i class="fas fa-search-dollar"></i> Analisa Masalah
+            </button>
+            <button class="nav-btn" onclick="switchTab('root-cause')">
+                <i class="fas fa-project-diagram"></i> Analisa Akar Masalah
+            </button>
+            <button class="nav-btn" onclick="switchTab('target-project')">
+                <i class="fas fa-bullseye"></i> Target Project
+            </button>
+            <button class="nav-btn" onclick="switchTab('countermeasure')">
+                <i class="fas fa-clipboard-check"></i> Countermeasure Plan
+            </button>
+            <button class="nav-btn" onclick="switchTab('implementation')">
+                <i class="fas fa-camera"></i> Project Implementation
+            </button>
+            <button class="nav-btn" onclick="switchTab('evaluation')">
+                <i class="fas fa-chart-line"></i> Evaluasi & Hasil
+            </button>
+            
+            <!-- Approval Menu Removed -->
+            
+            <div style="height: 1px; background: var(--border-color); margin: 10px 15px;"></div>
+            
+            <button class="nav-btn" onclick="generatePPT()" style="color: #e11d48;">
+                <i class="fas fa-file-powerpoint"></i> Export to PPT
+            </button>
+        </nav>
+
+        <div class="theme-toggle-area">
+            <button class="theme-btn" onclick="toggleTheme()">
+                <i class="fas fa-adjust"></i> <span id="theme-text">Switch Appearance</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main id="main-scroll">
+        
+        <!-- HERO -->
+        <div id="hero" class="content-section active">
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; text-align:center;">
+                <span class="badge">Operational Excellence 2025</span>
+                <h1 style="max-width:900px;">Perbaikan SLA SS PRPO0 untuk mencapai SLA 95% Pickup Inprovment</h1>
+                <div style="display:flex; gap:15px;">
+                    <button onclick="switchTab('profile')" class="btn-primary">View Strategy</button>
+                    <button onclick="switchTab('target-project')" style="padding:16px 30px; background:var(--bg-surface); border:1px solid var(--border-color); color:var(--text-main); border-radius:50px; cursor:pointer; font-weight:600;">Check Targets</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div id="profile" class="content-section">
+            <h2>Leader Profile & Structure</h2>
+            
+            <div class="grid-2">
+                <!-- BIO -->
+                <div class="card">
+                    <div class="profile-hero">
+                        <div class="avatar-circle">N</div>
+                        <div>
+                            <h3 style="margin:0; font-size:1.8rem;">Nasrullah</h3>
+                            <div style="color:var(--primary); font-weight:600;">SSC (Staging Store Coordinator)</div>
+                            <small style="color:var(--text-muted);">NIK: 10076544</small>
+                        </div>
+                    </div>
+                    <table class="info-table">
+                        <tr><td>TTL</td><td>Ujung Pandang, 04 Desember 1991</td></tr>
+                        <tr><td>Pendidikan</td><td>Strata 1 (S1)</td></tr>
+                        <tr><td>Universitas</td><td>STIM NITRO MKS</td></tr>
+                        <tr><td>Posisi</td><td>SSC (Staging Store Coordinator)</td></tr>
+                        <tr><td>Divisi</td><td>Operation</td></tr>
+                        <tr><td>Departemen</td><td>SULAMAL</td></tr>
+                    </table>
+                </div>
+
+                <!-- CAREER -->
+                <div class="card">
+                    <h3><i class="fas fa-history" style="color:var(--primary);"></i> Career Path</h3>
+                    <div class="timeline">
+                        <div class="t-item">
+                            <div class="t-year">2025 - Sekarang</div>
+                            <div class="t-role">SSC Acting</div>
+                        </div>
+                        <div class="t-item">
+                            <div class="t-year">2023 - 2025</div>
+                            <div class="t-role">SSL (Leader)</div>
+                        </div>
+                        <div class="t-item">
+                            <div class="t-year">2022 - 2023</div>
+                            <div class="t-role">SSA (Admin)</div>
+                        </div>
+                        <div class="t-item">
+                            <div class="t-year">2020 - 2022</div>
+                            <div class="t-role">Operator LH25 MKS</div>
+                        </div>
+                        <div class="t-item">
+                            <div class="t-year">2020</div>
+                            <div class="t-role">Satria</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORG CHART -->
+            <div class="card">
+                <h3><i class="fas fa-sitemap" style="color:var(--primary);"></i> Organizational Structure</h3>
+                <div class="org-flow">
+                    <div class="org-card"><strong>Wahyudi</strong><small>Regional Manager</small></div>
+                    <div class="org-line"></div>
+                    <div class="org-card"><strong>Asri Yadi</strong><small>Area Manager</small></div>
+                    <div class="org-line"></div>
+                    <div class="org-card highlight"><strong>Nasrullah</strong><small>SSC (Acting)</small></div>
+                    <div class="org-line"></div>
+                    <div class="org-team-grid">
+                        <div class="org-team-card"><small>SS MAKASSAR SELATAN</small><strong>NURMAN</strong></div>
+                        <div class="org-team-card"><small>SS MAKASSAR BARAT</small><strong>ABRAR</strong></div>
+                        <div class="org-team-card"><small>SS MAKASSAR TIMUR</small><strong>JAMAL</strong></div>
+                        <div class="org-team-card"><small>SS SOAT0</small><strong>FAHMI</strong></div>
+                        <div class="org-team-card"><small>SS BTMR0</small><strong>HANAFI</strong></div>
+                        <div class="org-team-card"><small>SS BGOY0</small><strong>SABAR</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BACKGROUND PROJECT -->
+        <div id="analysis" class="content-section">
+            <h2>Background Project</h2>
+            
+            <div class="analysis-grid">
+                <!-- CHART -->
+                <div class="card" style="margin-bottom: 0;">
+                    <h3><i class="fas fa-chart-line" style="color:var(--primary);"></i> Trend Performance (Sep - Nov 2025)</h3>
+                    <div style="height:400px; position:relative; width: 100%;">
+                        <canvas id="bgChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- SUMMARY -->
+                <div class="card" style="background:var(--bg-body); border-left: 5px solid var(--danger); margin-bottom: 0;">
+                    <h3><i class="fas fa-file-alt"></i> Executive Summary</h3>
+                    <p style="margin:0; font-size:1.05rem; color:var(--text-main); line-height: 1.6;">
+                        Berdasarkan data operasional 3 bulan terakhir, <strong>Total Load</strong> relatif stabil di angka 3.700-3.800 paket. Namun, pencapaian <strong>SLA OK</strong> terus mengalami tren penurunan dari <strong>90,99%</strong> (Sep) menjadi <strong>87,19%</strong> (Nov). Angka ini semakin menjauh dari standar operasional perusahaan yang menetapkan target minimal <strong>95%</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TABEL DATA -->
+            <div class="card" style="margin-top: 25px;">
+                <h3><i class="fas fa-table" style="color:var(--primary);"></i> Detail Data by Service</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Bulan</th>
+                                <th>Svc</th>
+                                <th>Total</th>
+                                <th>OK</th>
+                                <th>%OK</th>
+                                <th>Inprog</th>
+                                <th>%Inpr</th>
+                                <th>M/Hr</th>
+                                <th>%M/Hr</th>
+                                <th>Miss</th>
+                                <th>%Mis</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- September -->
+                            <tr>
+                                <td rowspan="5" style="vertical-align: middle; font-weight: bold; border-right: 1px solid var(--border-color);">Sep</td>
+                                <td><strong>SD</strong></td><td>493</td><td>372</td><td class="status-danger">75.46%</td><td>18</td><td>3.65%</td><td>79</td><td>16.02%</td><td>24</td><td>4.87%</td>
+                            </tr>
+                            <tr><td>ND</td><td>2</td><td>1</td><td class="status-danger">50.00%</td><td>0</td><td>0.00%</td><td>1</td><td>50.00%</td><td>0</td><td>0.00%</td></tr>
+                            <tr><td><strong>REG</strong></td><td>3339</td><td>3115</td><td class="status-danger">93.29%</td><td>70</td><td>2.10%</td><td>16</td><td>0.48%</td><td>138</td><td>4.13%</td></tr>
+                            <tr><td>ECO</td><td>4</td><td>4</td><td class="status-success">100.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td></tr>
+                            <tr><td>BIG</td><td>2</td><td>2</td><td class="status-success">100.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td></tr>
+
+                            <!-- Oktober -->
+                            <tr style="border-top: 2px solid var(--border-color);">
+                                <td rowspan="4" style="vertical-align: middle; font-weight: bold; border-right: 1px solid var(--border-color);">Okt</td>
+                                <td><strong>SD</strong></td><td>504</td><td>346</td><td class="status-danger">68.65%</td><td>21</td><td>4.17%</td><td>99</td><td>19.64%</td><td>38</td><td>7.54%</td>
+                            </tr>
+                            <tr><td><strong>REG</strong></td><td>3355</td><td>3074</td><td class="status-danger">91.62%</td><td>75</td><td>2.24%</td><td>10</td><td>0.30%</td><td>196</td><td>5.84%</td></tr>
+                            <tr><td>ECO</td><td>2</td><td>1</td><td class="status-danger">50.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td><td>1</td><td>50.00%</td></tr>
+                            <tr><td>BIG</td><td>21</td><td>15</td><td class="status-danger">71.43%</td><td>6</td><td>28.57%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td></tr>
+
+                            <!-- November -->
+                            <tr style="border-top: 2px solid var(--border-color);">
+                                <td rowspan="5" style="vertical-align: middle; font-weight: bold; border-right: 1px solid var(--border-color);">Nov</td>
+                                <td><strong>SD</strong></td><td>582</td><td>390</td><td class="status-danger">67.01%</td><td>25</td><td>4.30%</td><td>133</td><td>22.85%</td><td>34</td><td>5.84%</td>
+                            </tr>
+                            <tr><td>ND</td><td>2</td><td>1</td><td class="status-danger">0.00%</td><td>0</td><td>0.00%</td><td>2</td><td>100.00%</td><td>0</td><td>0.00%</td></tr>
+                            <tr><td><strong>REG</strong></td><td>3025</td><td>2755</td><td class="status-danger">91.07%</td><td>75</td><td>2.48%</td><td>9</td><td>0.30%</td><td>186</td><td>6.15%</td></tr>
+                            <tr><td>ECO</td><td>108</td><td>95</td><td class="status-danger">87.96%</td><td>3</td><td>2.78%</td><td>0</td><td>0.00%</td><td>10</td><td>9.26%</td></tr>
+                            <tr><td>BIG</td><td>8</td><td>8</td><td class="status-success">100.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0</td><td>0.00%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PARETO CONTENT -->
+            <h2 style="margin-top: 60px; border-left-color: var(--pareto-bar);">Pareto Analysis</h2>
+            <div class="card" style="border-left: 5px solid var(--pareto-bar);">
+                <p>Analisis kontributor kegagalan SLA (Total Miss + Miss By Hour).</p>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-chart-area" style="color:var(--pareto-bar);"></i> Grafik Pareto (Kontribusi Masalah)</h3>
+                <div style="height:450px; position:relative;">
+                    <canvas id="paretoChart"></canvas>
+                </div>
+            </div>
+            <div class="card">
+                <h3><i class="fas fa-table" style="color:var(--text-main);"></i> Tabel Kalkulasi Pareto</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Service</th><th>Miss</th><th>Miss/Hr</th><th>Tot Kontribusi</th><th>Kontribusi (%)</th><th>Kumulatif (%)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>REG</strong></td><td>450</td><td>450</td><td><strong>900</strong></td><td>75.00%</td><td>75.00%</td></tr>
+                            <tr><td><strong>SD</strong></td><td>130</td><td>130</td><td><strong>260</strong></td><td>21.67%</td><td>96.67%</td></tr>
+                            <tr><td><strong>ECO</strong></td><td>20</td><td>20</td><td><strong>40</strong></td><td>3.33%</td><td>100%</td></tr>
+                            <tr><td>BIG</td><td>0</td><td>0</td><td>0</td><td>0%</td><td>100%</td></tr>
+                            <tr><td>ND</td><td>0</td><td>0</td><td>0</td><td>0%</td><td>100%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- ANALISIS PARETO TAMBAHAN -->
+            <div class="card" style="background: linear-gradient(to right, var(--bg-surface), #fff0f9); border-left: 5px solid var(--pareto-bar); margin-top: 20px;">
+                <h3><i class="fas fa-microscope" style="color:var(--pareto-bar);"></i> Insight & Rekomendasi Strategis</h3>
+                <ul style="padding-left: 20px; line-height: 1.8;">
+                    <li style="margin-bottom: 10px;"><strong>Hukum Pareto (80/20):</strong> Data menunjukkan <strong>96.67%</strong> masalah SLA berasal dari <strong>REG (75%)</strong> dan <strong>SD (21.67%)</strong>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Strategi REG (High Volume):</strong> Fokus pada efisiensi rute dan validasi pra-pickup.</li>
+                    <li style="margin-bottom: 10px;"><strong>Strategi SD (Time Sensitive):</strong> Fokus pada kedisiplinan jam (Miss By Hour) dengan Checkpoint per 2 Jam.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- PROBLEM ANALYSIS (QCDSMP & 4M1E) -->
+        <div id="problem-analysis" class="content-section">
+            <h2>Analisa Masalah Mendalam</h2>
+            <h3 style="margin-bottom: 20px; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block;">1. Analisis Dampak Bisnis (QCDSMP)</h3>
+            <div class="card" style="border-left: 5px solid var(--primary); margin-bottom: 25px;">
+                <p>Impact Analysis: Project SLA Pickup Improvement</p>
+            </div>
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th style="width: 50px; text-align:center;">Icon</th><th style="width: 120px;">Aspek</th><th>Analisis Dampak & Risiko</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #2563EB;"><i class="fas fa-medal"></i></td><td><strong>Quality</strong><br><small style="color:var(--text-muted);">Kualitas</small></td><td>Penurunan SLA di bawah 95% berdampak langsung pada <strong>tingkat kepercayaan shipper</strong>.</td></tr>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #EF4444;"><i class="fas fa-coins"></i></td><td><strong>Cost</strong><br><small style="color:var(--text-muted);">Biaya</small></td><td>Biaya ganda (double cost) akibat kunjungan ulang yang tidak efektif.</td></tr>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #F59E0B;"><i class="fas fa-shipping-fast"></i></td><td><strong>Delivery</strong><br><small style="color:var(--text-muted);">Pengiriman</small></td><td>Efek Domino keterlambatan. Perubahan rute ke shipper kosong menghambat pengiriman parcel yang dibawa.</td></tr>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #10B981;"><i class="fas fa-hard-hat"></i></td><td><strong>Safety</strong><br><small style="color:var(--text-muted);">Keselamatan</small></td><td>Tekanan mengejar SLA memicu perilaku berkendara tidak aman (rushing).</td></tr>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #8B5CF6;"><i class="fas fa-users"></i></td><td><strong>Morale</strong><br><small style="color:var(--text-muted);">Moral Tim</small></td><td>Frustasi operasional akibat rute tidak efisien.</td></tr>
+                            <tr><td class="text-center" style="font-size: 1.5rem; color: #EC4899;"><i class="fas fa-chart-line"></i></td><td><strong>Productivity</strong><br><small style="color:var(--text-muted);">Produktivitas</small></td><td>Inefisiensi rute mengurangi jumlah paket per kurir (productivity per manpower).</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px;"></div>
+            <h3 style="margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; display: inline-block;">2. Root Cause Analysis (4M1E)</h3>
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th style="width: 100px;">Faktor (4M1E)</th><th>Proses</th><th>Actual Saat Ini</th><th>Ideal / Standar</th><th>GAP (Masalah)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td style="font-weight:bold; color:var(--primary);">MAN<br><small>(Manusia)</small></td><td>Eksekusi Task List</td><td>Kurir menunda pickup & kurang disiplin update status.</td><td>Task list dikerjakan urut & update on spot.</td><td style="color:var(--danger); font-weight:600;">Disiplin & Monitoring rendah.</td></tr>
+                            <tr><td style="font-weight:bold; color:var(--accent);">MATERIAL<br><small>(Paket)</small></td><td>Kesiapan Paket</td><td>Paket belum siap saat kurir tiba.</td><td>Paket ready saat kurir tiba.</td><td style="color:var(--danger); font-weight:600;">Wasted Visit.</td></tr>
+                            <tr><td style="font-weight:bold; color:#F59E0B;">MACHINE<br><small>(Sistem)</small></td><td>Notifikasi</td><td>Terjadi latency dan error/bug aplikasi saat volume tinggi (Event).</td><td>Real-time.</td><td style="color:var(--danger); font-weight:600;">App Bug saat Event.</td></tr>
+                            <tr><td style="font-weight:bold; color:#8B5CF6;">METHOD<br><small>(Metode)</small></td><td>Routing</td><td>Rute statis, jalur macet.</td><td>Rute dinamis adaptif.</td><td style="color:var(--danger); font-weight:600;">Rute tidak adaptif.</td></tr>
+                            <tr><td style="font-weight:bold; color:#EC4899;">ENV<br><small>(Lingkungan)</small></td><td>Kondisi</td><td>Macet PRPO jam 16-18.</td><td>Waktu tempuh stabil.</td><td style="color:var(--danger); font-weight:600;">Traffic Jam.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW TAB: ROOT CAUSE (LOGIC TREE ONLY) -->
+        <div id="root-cause" class="content-section">
+            <h2>Analisa Akar Masalah (Logic Tree)</h2>
+            <div class="card" style="border-left: 5px solid var(--primary); margin-bottom: 30px;">
+                <p>Visualisasi hubungan sebab-akibat menggunakan diagram Logic Tree untuk mengidentifikasi akar permasalahan secara hierarkis.</p>
+            </div>
+
+            <!-- LOGIC TREE DIAGRAM -->
+            <div class="tree-wrapper">
+                <div class="tree">
+                    
+                    <!-- Root -->
+                    <div class="tree-root">SLA Pickup < 95%</div>
+
+                    <!-- Branches -->
+                    <div class="tree-branches">
+                        <!-- MAN -->
+                        <div class="tree-node">
+                            <div class="node-category" style="border-color:var(--primary); color:var(--primary);">MAN</div>
+                            <div class="node-leaves">
+                                <div class="leaf">Kurang Disiplin (Task List)</div>
+                                <div class="leaf">Monitoring Belum Optimal</div>
+                            </div>
+                        </div>
+
+                        <!-- METHOD -->
+                        <div class="tree-node">
+                            <div class="node-category" style="border-color:#8B5CF6; color:#8B5CF6;">METHOD</div>
+                            <div class="node-leaves">
+                                <div class="leaf">Rute Statis (Tidak Adaptif)</div>
+                                <div class="leaf">Checkpoint Kurang Ketat</div>
+                            </div>
+                        </div>
+
+                        <!-- MACHINE -->
+                        <div class="tree-node">
+                            <div class="node-category" style="border-color:#F59E0B; color:#F59E0B;">MACHINE</div>
+                            <div class="node-leaves">
+                                <div class="leaf">Latency App (Delay)</div>
+                                <div class="leaf">App Bug saat Event</div>
+                            </div>
+                        </div>
+
+                        <!-- MATERIAL -->
+                        <div class="tree-node">
+                            <div class="node-category" style="border-color:var(--accent); color:var(--accent);">MATERIAL</div>
+                            <div class="node-leaves">
+                                <div class="leaf">Shipper Not Ready (Wasted Visit)</div>
+                            </div>
+                        </div>
+
+                        <!-- ENVIRONMENT -->
+                        <div class="tree-node">
+                            <div class="node-category" style="border-color:#EC4899; color:#EC4899;">ENV</div>
+                            <div class="node-leaves">
+                                <div class="leaf">Traffic Jam (16:00 - 18:00)</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SUMMARY CARD -->
+            <div class="card" style="margin-top: 30px; background: var(--bg-surface); border: 1px solid var(--border-color);">
+                <h3><i class="fas fa-file-alt" style="color:var(--primary);"></i> Summary: Akar Masalah Utama</h3>
+                <p style="margin-bottom: 10px;">Dari analisis Logic Tree di atas, teridentifikasi tiga area prioritas yang memerlukan intervensi segera:</p>
+                <ul style="padding-left: 20px; line-height: 1.6;">
+                    <li style="margin-bottom: 8px;"><strong>Man (Manusia):</strong> Kurangnya kedisiplinan dalam eksekusi <em>Task List</em> harian dan monitoring jam-jaman yang belum optimal menjadi faktor evaluasi operasional.</li>
+                    <li style="margin-bottom: 8px;"><strong>Method (Metode):</strong> Penggunaan rute statis yang tidak beradaptasi dengan kondisi lalu lintas sore hari menghambat produktivitas pickup di area padat.</li>
+                    <li style="margin-bottom: 8px;"><strong>Environment (Lingkungan):</strong> Kemacetan lalu lintas pada jam pulang kerja (16:00 - 18:00) menjadi hambatan eksternal terbesar yang memperburuk kinerja SLA.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TARGET PROJECT -->
+        <div id="target-project" class="content-section">
+            <h2>Menetapkan Target</h2>
+            <div class="analysis-grid">
+                <!-- LEFT COLUMN: SMART TARGET -->
+                <div class="card" style="border-top: 4px solid var(--primary);">
+                    <h3 style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 20px;">
+                        <i class="fas fa-crosshairs" style="color:var(--primary);"></i> SMART Goals Framework
+                    </h3>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Specific -->
+                        <div style="display: flex; gap: 15px;">
+                            <div style="background:var(--bg-body); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); flex-shrink: 0;">S</div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-main);">Specific (Spesifik)</div>
+                                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">
+                                    Optimalisasi proses pickup di SS PRPO0 dengan intervensi pada akar masalah:
+                                    <ul style="margin: 5px 0 0 20px; padding: 0; font-size: 0.85rem; color: var(--text-muted);">
+                                        <li><strong>Man:</strong> Penegakan disiplin via Monitoring Checkpoint per 2 jam.</li>
+                                        <li><strong>Method:</strong> Penerapan rute dinamis (adaptif macet).</li>
+                                        <li><strong>Material:</strong> Validasi kesiapan paket (Pre-call) untuk hindari wasted visit.</li>
+                                    </ul>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Measurable -->
+                        <div style="display: flex; gap: 15px;">
+                            <div style="background:var(--bg-body); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); flex-shrink: 0;">M</div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-main);">Measurable (Terukur)</div>
+                                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">
+                                    Mencapai <strong>SLA Pick Up ≥ 95%</strong> (Kenaikan +9%).<br>
+                                    Menurunkan angka <em>Miss by Hour</em> (layanan SD) hingga < 5%.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Achievable -->
+                        <div style="display: flex; gap: 15px;">
+                            <div style="background:var(--bg-body); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); flex-shrink: 0;">A</div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-main);">Achievable (Dapat Dicapai)</div>
+                                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">
+                                    Target realistis dicapai melalui perbaikan efisiensi rute (Method) dan kedisiplinan (Man) dengan mengoptimalkan produktivitas Satria (kurir motor) existing tanpa penambahan manpower.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Relevant -->
+                        <div style="display: flex; gap: 15px;">
+                            <div style="background:var(--bg-body); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); flex-shrink: 0;">R</div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-main);">Relevant (Relevan)</div>
+                                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">
+                                    Menjawab isu <strong>Double Cost</strong> dan <strong>Shipper Churn</strong> yang ditemukan pada analisis dampak bisnis (QCDSMP).
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Time-Bound -->
+                        <div style="display: flex; gap: 15px;">
+                            <div style="background:var(--bg-body); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); flex-shrink: 0;">T</div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-main);">Time-Bound (Batas Waktu)</div>
+                                <p style="margin: 5px 0 0 0; font-size: 0.95rem;">Target stabilitas SLA tercapai sepenuhnya pada: <strong style="color:var(--danger);">Februari 2026</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: VISUALIZATION DUMMY -->
+                <div class="card" style="display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 20px;"><i class="fas fa-chart-line" style="color:var(--accent);"></i> Proyeksi Pencapaian</h3>
+                    <div style="flex: 1; min-height: 300px; position: relative;">
+                        <canvas id="targetChart"></canvas>
+                    </div>
+                    <div style="margin-top: 20px; background: var(--bg-body); padding: 15px; border-radius: 8px; font-size: 0.9rem;">
+                        <strong>Strategi Kunci:</strong> Grafik menunjukkan estimasi kenaikan SLA sebesar 2-3% per bulan seiring dengan implementasi perbaikan pada faktor Man dan Method.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: COUNTERMEASURE PLAN -->
+        <div id="countermeasure" class="content-section">
+            <h2>Countermeasure Plan (Rencana Penanggulangan)</h2>
+            <div class="card" style="border-left: 5px solid var(--accent); margin-bottom: 25px;">
+                <p>Rencana aksi taktis yang disusun berdasarkan prioritas masalah (Pareto) dan akar penyebab (4M1E) untuk memastikan pencapaian target SLA > 95%.</p>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px;"><i class="fas fa-list-ol" style="color:var(--primary);"></i> Tabel Rencana Aksi (Action Plan)</h3>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 15%;">Faktor (4M1E)</th>
+                                <th style="width: 20%;">Akar Masalah</th>
+                                <th style="width: 35%;">Countermeasure (Tindakan Perbaikan)</th>
+                                <th style="width: 15%;">PIC</th>
+                                <th style="width: 15%;">Timeline</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ACTION 1: MAN -->
+                            <tr>
+                                <td style="font-weight:bold; color:var(--primary);">MAN</td>
+                                <td>
+                                    Kurangnya disiplin eksekusi Task List & Monitoring jam-jaman.
+                                </td>
+                                <td>
+                                    <ul style="padding-left: 15px; margin: 0; line-height: 1.5;">
+                                        <li><strong>Briefing Pagi Wajib:</strong> Review performa H-1 dan set target harian sebelum berangkat.</li>
+                                        <li><strong>Monitoring Checkpoint:</strong> Leader SS wajib cek dashboard 'Aware' setiap 2 jam (10:00, 12:00, 14:00, 16:00).</li>
+                                        <li><strong>Reward & Punishment:</strong> Insentif kecil untuk 'Zero Miss' mingguan.</li>
+                                    </ul>
+                                </td>
+                                <td>Leader SS</td>
+                                <td>Week 1 (Immediate)</td>
+                            </tr>
+
+                            <!-- ACTION 2: METHOD -->
+                            <tr>
+                                <td style="font-weight:bold; color:#8B5CF6;">METHOD</td>
+                                <td>
+                                    Rute statis tidak adaptif terhadap kemacetan sore & Area padat (REG).
+                                </td>
+                                <td>
+                                    <ul style="padding-left: 15px; margin: 0; line-height: 1.5;">
+                                        <li><strong>Dynamic Rerouting:</strong> Ubah pola rute sore (16:00-18:00) untuk menghindari titik macet utama.</li>
+                                        <li><strong>Zoning Ulang:</strong> Pecah area padat (Volume > 100 paket) menjadi 2 sub-zona kecil agar coverage lebih cepat.</li>
+                                    </ul>
+                                </td>
+                                <td>SSC & Leader</td>
+                                <td>Week 1 - 2</td>
+                            </tr>
+
+                            <!-- ACTION 3: MATERIAL -->
+                            <tr>
+                                <td style="font-weight:bold; color:var(--accent);">MATERIAL</td>
+                                <td>
+                                    Paket belum siap (Shipper Not Ready) saat kurir datang -> Wasted Visit.
+                                </td>
+                                <td>
+                                    <ul style="padding-left: 15px; margin: 0; line-height: 1.5;">
+                                        <li><strong>Validasi Pre-Call (WA):</strong> Admin/Kurir WA blast ke list shipper VIP 1 jam sebelum jadwal pickup.</li>
+                                        <li><strong>Edukasi Shipper:</strong> Sosialisasi batas waktu request pickup (Cut Off Time) agar paket siap tepat waktu.</li>
+                                    </ul>
+                                </td>
+                                <td>SSA (Admin)</td>
+                                <td>Week 2 - 4</td>
+                            </tr>
+
+                            <!-- ACTION 4: MACHINE -->
+                            <tr>
+                                <td style="font-weight:bold; color:#F59E0B;">MACHINE</td>
+                                <td>
+                                    Latency aplikasi & Error/Bug saat Event menghambat update status real-time.
+                                </td>
+                                <td>
+                                    <ul style="padding-left: 15px; margin: 0; line-height: 1.5;">
+                                        <li><strong>Tech Escalation:</strong> Tiket prioritas ke IT Pusat untuk perbaikan server capacity sebelum event.</li>
+                                        <li><strong>Manual Contingency:</strong> SOP pencatatan manual sementara saat aplikasi down.</li>
+                                    </ul>
+                                </td>
+                                <td>IT Support / SSC</td>
+                                <td>Ongoing</td>
+                            </tr>
+                            
+                            <!-- ACTION 5: SPECIFIC SD -->
+                            <tr style="background-color: rgba(239, 68, 68, 0.05);">
+                                <td style="font-weight:bold; color:var(--danger);">FOCUS: SD</td>
+                                <td>
+                                    Tingginya Miss By Hour pada layanan Same Day (SD).
+                                </td>
+                                <td>
+                                    <ul style="padding-left: 15px; margin: 0; line-height: 1.5;">
+                                        <li><strong>Prioritas Assign:</strong> Order SD yang masuk > jam 14:00 langsung di-assign ke kurir <em>backup</em> atau kurir dengan load terendah.</li>
+                                        <li><strong>Flagging Khusus:</strong> Memberi tanda prioritas ke Task List kurir.</li>
+                                    </ul>
+                                </td>
+                                <td>Leader SS</td>
+                                <td>Week 1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PREVENTIVE MEASURE -->
+            <div class="card" style="margin-top: 30px;">
+                <h3><i class="fas fa-shield-alt" style="color:var(--accent);"></i> Langkah Pencegahan (Preventive Action)</h3>
+                <div class="grid-2">
+                    <div style="background:var(--bg-body); padding:15px; border-radius:8px;">
+                        <strong style="color:var(--primary);">1. Backup Manpower (Satria Cadangan)</strong>
+                        <p style="font-size:0.9rem; margin-top:5px;">Menyiapkan skema backup (Part-timer atau Rolling) untuk mengantisipasi ketidakhadiran kurir mendadak atau paket event double date tiba di SS PRPO0.</p>
+                    </div>
+                    <div style="background:var(--bg-body); padding:15px; border-radius:8px;">
+                        <strong style="color:var(--primary);">2. Review Harian (Daily Huddle)</strong>
+                        <p style="font-size:0.9rem; margin-top:5px;">Evaluasi 10 menit setiap sore untuk membahas kendala hari ini dan perbaikan langsung untuk esok hari (Continuous Improvement).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW TAB: PROJECT IMPLEMENTATION (PLACEHOLDERS) -->
+        <div id="implementation" class="content-section">
+            <h2>Dokumentasi Implementasi Lapangan</h2>
+            <div class="card" style="margin-bottom: 20px;">
+                <p>Dokumentasi foto kegiatan briefing, monitoring lapangan, dan koordinasi tim sebagai bukti pelaksanaan countermeasure plan.</p>
+            </div>
+
+            <!-- GROUP 1: INTERNAL ACTIVITY -->
+            <h3 style="border-left: 4px solid var(--primary); padding-left: 15px; margin-top: 30px; margin-bottom: 20px; color: var(--text-main);">
+                1. Konsolidasi Tim Internal (Briefing & Evaluasi)
+            </h3>
+            <div class="gallery-grid">
+                <!-- Item 1: Briefing Pagi -->
+                <div class="gallery-item has-image" id="gallery-1">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-camera gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Briefing Pagi</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/Lhsh3cfX/brifing-1.jpg" class="gallery-img-preview" alt="Briefing Pagi">
+                </div>
+                
+                <!-- Item 8: Evaluasi Harian -->
+                <div class="gallery-item has-image" id="gallery-8">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-tasks gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Evaluasi Harian</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/j9K4zRb7/brifing-2.jpg" class="gallery-img-preview" alt="Evaluasi Harian">
+                </div>
+
+                <!-- Item 3: Roleplay Kurir -->
+                <div class="gallery-item has-image" id="gallery-3">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-camera gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Roleplay Kurir</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/Gf6rTgXy/brifing-3.jpg" class="gallery-img-preview" alt="Roleplay Kurir">
+                </div>
+            </div>
+
+            <!-- GROUP 2: EXTERNAL ACTIVITY -->
+            <h3 style="border-left: 4px solid var(--accent); padding-left: 15px; margin-top: 50px; margin-bottom: 20px; color: var(--text-main);">
+                2. Interaksi Shipper & Koordinasi Lapangan
+            </h3>
+            <div class="gallery-grid">
+                <!-- Item 4: Validasi Shipper -->
+                <div class="gallery-item has-image" id="gallery-4">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-camera gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Validasi Shipper</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/Gf93PpjH/shipper-1.jpg" class="gallery-img-preview" alt="Validasi Shipper">
+                </div>
+
+                <!-- Item 6: Edukasi Shipper -->
+                <div class="gallery-item has-image" id="gallery-6">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-chalkboard-teacher gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Edukasi Shipper</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/k27Vgf2X/shipper-2.jpg" class="gallery-img-preview" alt="Edukasi Shipper">
+                </div>
+
+                <!-- Item 5: Koordinasi Rute -->
+                <div class="gallery-item has-image" id="gallery-5">
+                    <div class="gallery-content" style="text-align: center;">
+                        <i class="fas fa-map-marked-alt gallery-icon"></i>
+                        <div style="font-weight:600;">Foto Koordinasi Rute</div>
+                    </div>
+                    <img src="https://i.ibb.co.com/YT05zWS2/shipper-3.jpg" class="gallery-img-preview" alt="Koordinasi Rute">
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW TAB: EVALUATION & RESULTS -->
+        <div id="evaluation" class="content-section">
+            <h2>Evaluasi & Hasil Proses</h2>
+            
+            <!-- QCDSMP COMPARISON -->
+            <h3 style="margin-bottom: 20px;">1. Perbandingan Dampak QCDSMP</h3>
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Aspek</th>
+                                <th style="width: 40%;">Before (Kondisi Awal)</th>
+                                <th style="width: 40%;">After (Hasil Implementasi)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Quality</strong></td>
+                                <td>Tingkat komplain tinggi, SLA < 95%.</td>
+                                <td class="status-success">SLA Stabil > 96% (Jan: 97.68%, Feb: 96.68%). Trust Shipper Meningkat.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cost</strong></td>
+                                <td>Double cost akibat kunjungan ulang.</td>
+                                <td class="status-success">Efisiensi Biaya (Zero Double Cost) & Penghematan BBM via Rute Dinamis.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Delivery</strong></td>
+                                <td>Delay pengiriman akibat late pickup.</td>
+                                <td class="status-success">On-time Pickup 99%. Tidak ada sisa paket (Backlog) di Shipper.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Safety</strong></td>
+                                <td>Potensi unsafe riding karena rushing.</td>
+                                <td class="status-success">Zero Accident. Kecepatan berkendara stabil karena manajemen waktu lebih baik.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Morale</strong></td>
+                                <td>Frustasi tim karena rute tidak efisien.</td>
+                                <td class="status-success">Motivasi tim tinggi & Target insentif tercapai.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Productivity</strong></td>
+                                <td>Productivity per manpower rendah.</td>
+                                <td class="status-success">Operasional efisien, kurir fokus pada kecepatan dan kualitas pickup (Zero Miss).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TREND GRAPH (EXTENDED) -->
+            <h3 style="margin-top: 50px; margin-bottom: 20px;">2. Trend & Proyeksi SLA (6 Bulan)</h3>
+            <div class="card">
+                <div style="height:400px; position:relative; width: 100%;">
+                    <canvas id="evalChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- APPROVAL & CLOSING SECTION REMOVED -->
+
+    </main>
+
+    <script>
+        // Register DataLabels Plugin
+        Chart.register(ChartDataLabels);
+
+        // Define variables globally
+        let slaChart, bgChart, paretoChart, targetChart, evalChart;
+
+        // Ensure DOM is ready before accessing elements
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+        });
+
+        // 1. THEME TOGGLE LOGIC
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            updateChartTheme(next);
+        }
+
+        // 2. TAB NAVIGATION
+        function switchTab(id) {
+            const targetEl = document.getElementById(id);
+            if (!targetEl) {
+                console.warn(`Tab with id '${id}' not found.`);
+                return;
+            }
+
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            targetEl.classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const btns = Array.from(document.querySelectorAll('.nav-btn'));
+            const activeBtn = btns.find(b => b.getAttribute('onclick').includes(id));
+            if(activeBtn) activeBtn.classList.add('active');
+
+            document.getElementById('main-scroll').scrollTop = 0;
+            
+            // Resize charts
+            if(id === 'analysis') {
+                if(bgChart) bgChart.resize();
+                if(paretoChart) paretoChart.resize();
+            }
+            if(id === 'target-project') { 
+                if(targetChart) targetChart.resize();
+            }
+            if(id === 'evaluation') {
+                if(evalChart) evalChart.resize();
+            }
+        }
+
+        // 3. CHART.JS INITIALIZATION
+        function initCharts() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? '#334155' : '#E2E8F0';
+            const textColor = isDark ? '#94A3B8' : '#64748B';
+            const pointBg = isDark ? '#1E293B' : '#FFF';
+            
+            const bgCanvas = document.getElementById('bgChart');
+            const paretoCanvas = document.getElementById('paretoChart');
+            const targetCanvas = document.getElementById('targetChart');
+            const evalCanvas = document.getElementById('evalChart');
+
+            // --- BACKGROUND PROJECT MIXED CHART ---
+            if (bgCanvas) {
+                const ctxBg = bgCanvas.getContext('2d');
+                bgChart = new Chart(ctxBg, {
+                    data: {
+                        labels: ['Sep 2025', 'Okt 2025', 'Nov 2025'],
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: 'Total Load (Paket)',
+                                data: [3840, 3882, 3725],
+                                backgroundColor: isDark ? 'rgba(96, 165, 250, 0.5)' : 'rgba(37, 99, 235, 0.6)', 
+                                borderColor: isDark ? '#60A5FA' : '#2563EB',
+                                borderWidth: 1,
+                                yAxisID: 'y',
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    color: textColor,
+                                    backgroundColor: isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)', 
+                                    borderRadius: 4,
+                                    padding: 6,
+                                    font: { weight: 'bold' },
+                                    formatter: Math.round
+                                }
+                            },
+                            {
+                                type: 'line',
+                                label: 'SLA OK (%)',
+                                data: [90.99, 88.51, 87.19],
+                                borderColor: '#EF4444',
+                                backgroundColor: '#EF4444',
+                                borderWidth: 3,
+                                pointRadius: 5,
+                                pointBackgroundColor: pointBg,
+                                yAxisID: 'y1',
+                                tension: 0.1,
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    color: '#FFFFFF', 
+                                    backgroundColor: '#EF4444', 
+                                    borderRadius: 4,
+                                    padding: 6,
+                                    font: { weight: 'bold' },
+                                    formatter: function(value) { return value + '%' }
+                                }
+                            },
+                            {
+                                type: 'line',
+                                label: 'Target SLA (95%)',
+                                data: [95, 95, 95],
+                                borderColor: '#10B981',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                yAxisID: 'y1',
+                                datalabels: { display: false }
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: { 
+                            legend: { position: 'bottom', labels: { color: textColor } }
+                        },
+                        scales: {
+                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Total Load', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
+                            y1: { type: 'linear', display: true, position: 'right', min: 80, max: 105, title: { display: true, text: 'SLA (%)', color: textColor }, grid: { drawOnChartArea: false }, ticks: { color: textColor } },
+                            x: { grid: { display: false }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+            }
+
+            // --- PARETO CHART ---
+            if (paretoCanvas) {
+                const ctxPareto = paretoCanvas.getContext('2d');
+                paretoChart = new Chart(ctxPareto, {
+                    type: 'bar',
+                    data: {
+                        labels: ['REG', 'SD', 'ECO', 'BIG', 'ND'],
+                        datasets: [
+                            {
+                                label: 'Total Kontribusi Masalah',
+                                data: [900, 260, 40, 0, 0],
+                                backgroundColor: '#BF007F',
+                                borderColor: '#BF007F',
+                                borderWidth: 1,
+                                yAxisID: 'y',
+                                order: 2,
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'top',
+                                    color: textColor,
+                                    font: { weight: 'bold' }
+                                }
+                            },
+                            {
+                                type: 'line',
+                                label: 'Persentase Kumulatif (%)',
+                                data: [75.00, 96.67, 100.00, 100.00, 100.00],
+                                borderColor: '#FFDD00',
+                                backgroundColor: '#FFDD00',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#FFDD00',
+                                yAxisID: 'y1',
+                                order: 1,
+                                tension: 0.1,
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'right',
+                                    color: '#D4B300', 
+                                    font: { weight: 'bold', size: 10 },
+                                    formatter: function(value) { return Math.round(value) + '%' }
+                                }
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: textColor } },
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Total Kontribusi', color: textColor },
+                                grid: { color: gridColor },
+                                ticks: { color: textColor }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                min: 0,
+                                max: 110,
+                                title: { display: true, text: 'Kumulatif (%)', color: textColor },
+                                grid: { drawOnChartArea: false },
+                                ticks: { color: textColor, callback: function(value) { return value + "%" } }
+                            },
+                            x: { grid: { display: false }, ticks: { color: textColor } }
+                        }
+                    }
+                });
+            }
+
+            // --- TARGET CHART ---
+            if (targetCanvas) {
+                const ctxTarget = targetCanvas.getContext('2d');
+                targetChart = new Chart(ctxTarget, {
+                    type: 'line',
+                    data: {
+                        labels: ['Nov 25', 'Dec 25', 'Jan 26', 'Feb 26'],
+                        datasets: [
+                            {
+                                label: 'Proyeksi SLA (%)',
+                                data: [87.19, 90.50, 93.00, 96.00],
+                                borderColor: '#10B981', // Emerald Green
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#10B981',
+                                borderDash: [5, 5],
+                                fill: true,
+                                tension: 0.3,
+                                datalabels: {
+                                    align: 'top',
+                                    color: '#10B981',
+                                    font: { weight: 'bold' },
+                                    formatter: function(value) { return value + '%' }
+                                }
+                            },
+                            {
+                                label: 'Target Perusahaan',
+                                data: [95, 95, 95, 95],
+                                borderColor: '#EF4444',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                datalabels: { display: false }
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: textColor } },
+                            tooltip: { mode: 'index', intersect: false }
+                        },
+                        scales: {
+                            y: { 
+                                min: 85, max: 100, 
+                                grid: { color: gridColor, borderDash: [5, 5] },
+                                ticks: { color: textColor }
+                            },
+                            x: { 
+                                grid: { display: false },
+                                ticks: { color: textColor }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // --- EVALUATION CHART (EXTENDED) ---
+            if (evalCanvas) {
+                const ctxEval = evalCanvas.getContext('2d');
+                evalChart = new Chart(ctxEval, {
+                    type: 'line',
+                    data: {
+                        labels: ['Sep', 'Okt', 'Nov', 'Des', 'Jan', 'Feb (1-7)'],
+                        datasets: [
+                            {
+                                label: 'SLA Actual',
+                                data: [90.99, 88.51, 87.19, 95.16, 97.68, 96.68], 
+                                borderColor: '#2563EB',
+                                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointBackgroundColor: pointBg,
+                                datalabels: {
+                                    align: 'top',
+                                    color: textColor,
+                                    font: { weight: 'bold' },
+                                    formatter: (value) => value + '%'
+                                }
+                            },
+                            {
+                                label: 'Target (95%)',
+                                data: [95, 95, 95, 95, 95, 95],
+                                borderColor: '#10B981',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                datalabels: { display: false }
+                            }
+                        ]
+                    },
+                    options: getCommonOptions(gridColor, textColor)
+                });
+            }
+        }
+
+        function getCommonOptions(gridColor, textColor) {
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: { 
+                        min: 80, max: 100, 
+                        grid: { color: gridColor, borderDash: [5, 5] },
+                        ticks: { color: textColor }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { color: textColor }
+                    }
+                }
+            };
+        }
+
+        function updateChartTheme(theme) {
+            const isDark = theme === 'dark';
+            const gridColor = isDark ? '#334155' : '#E2E8F0';
+            const textColor = isDark ? '#94A3B8' : '#64748B';
+            const pointBg = isDark ? '#1E293B' : '#FFF';
+            const barColor = isDark ? 'rgba(96, 165, 250, 0.5)' : 'rgba(37, 99, 235, 0.6)';
+            const barBorder = isDark ? '#60A5FA' : '#2563EB';
+
+            if(bgChart) {
+                bgChart.options.scales.y.grid.color = gridColor;
+                bgChart.options.scales.y.ticks.color = textColor;
+                bgChart.options.scales.y.title.color = textColor;
+                bgChart.options.scales.y1.ticks.color = textColor;
+                bgChart.options.scales.y1.title.color = textColor;
+                bgChart.options.scales.x.ticks.color = textColor;
+                bgChart.options.plugins.legend.labels.color = textColor;
+                
+                bgChart.data.datasets[0].backgroundColor = barColor;
+                bgChart.data.datasets[0].borderColor = barBorder;
+                bgChart.data.datasets[0].datalabels.color = textColor;
+                bgChart.data.datasets[0].datalabels.backgroundColor = isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)';
+                
+                bgChart.data.datasets[1].pointBackgroundColor = pointBg;
+                bgChart.update();
+            }
+            
+            if(paretoChart) {
+                paretoChart.options.scales.y.grid.color = gridColor;
+                paretoChart.options.scales.y.ticks.color = textColor;
+                paretoChart.options.scales.y.title.color = textColor;
+                paretoChart.options.scales.y1.ticks.color = textColor;
+                paretoChart.options.scales.y1.title.color = textColor;
+                paretoChart.options.scales.x.ticks.color = textColor;
+                paretoChart.options.plugins.legend.labels.color = textColor;
+                paretoChart.data.datasets[0].datalabels.color = textColor; 
+                paretoChart.update();
+            }
+
+            if (targetChart) {
+                targetChart.options.scales.y.grid.color = gridColor;
+                targetChart.options.scales.y.ticks.color = textColor;
+                targetChart.options.scales.x.ticks.color = textColor;
+                targetChart.options.plugins.legend.labels.color = textColor;
+                targetChart.data.datasets[0].pointBackgroundColor = pointBg;
+                targetChart.update();
+            }
+
+            if (evalChart) {
+                evalChart.options.scales.y.grid.color = gridColor;
+                evalChart.options.scales.y.ticks.color = textColor;
+                evalChart.options.scales.x.ticks.color = textColor;
+                evalChart.data.datasets[0].datalabels.color = textColor;
+                evalChart.data.datasets[0].pointBackgroundColor = pointBg;
+                evalChart.update();
+            }
+        }
+
+        // --- PPT GENERATION FUNCTION ---
+        async function generatePPT() {
+            // Notifikasi sederhana
+            const btn = document.querySelector('button[onclick="generatePPT()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            
+            try {
+                const pptx = new PptxGenJS();
+                pptx.layout = 'LAYOUT_16x9';
+                pptx.author = 'Nasrullah';
+                pptx.title = 'SLA Pickup Improvement Proposal';
+
+                // Helper: Judul Slide Konsisten
+                const addSlide = (title) => {
+                    const slide = pptx.addSlide();
+                    // Garis Header
+                    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: '100%', h: 0.15, fill: '2563EB' });
+                    // Teks Judul
+                    slide.addText(title, { x: 0.5, y: 0.4, w: '90%', fontSize: 24, bold: true, color: '1E293B', fontFace: 'Arial' });
+                    // Garis Pemisah
+                    slide.addShape(pptx.ShapeType.line, { x: 0.5, y: 1.0, w: '90%', h: 0, line: { color: 'E2E8F0', width: 2 } });
+                    return slide;
+                };
+
+                // SLIDE 1: COVER
+                const slide1 = pptx.addSlide();
+                slide1.background = { color: 'F8FAFC' };
+                slide1.addText("Operational Excellence 2025", { x: 0, y: 2.2, w: '100%', align: 'center', fontSize: 14, color: '64748B', spacing: {line: 20} });
+                slide1.addText("STRATEGIC PROPOSAL:\nSLA PICKUP IMPROVEMENT", { x: 1, y: 2.8, w: '80%', align: 'center', fontSize: 36, bold: true, color: '1E293B' });
+                slide1.addText("Optimasi Operasional SULAMAL untuk mencapai SLA > 95%", { x: 0, y: 4.5, w: '100%', align: 'center', fontSize: 18, color: '2563EB' });
+                
+                // Kotak Nama
+                slide1.addShape(pptx.ShapeType.rect, { x: 3.5, y: 5.5, w: 3, h: 1.2, fill: 'FFFFFF', line: { color: 'E2E8F0' } });
+                slide1.addText("Dibuat Oleh:\nNasrullah\nSSC (Acting)", { x: 3.5, y: 5.6, w: 3, h: 1.2, align: 'center', fontSize: 12, color: '334155' });
+
+                // SLIDE 2: PROFILE
+                const slide2 = addSlide("Leader Profile");
+                slide2.addText("Nasrullah - SSC (Acting)", { x: 0.5, y: 1.5, fontSize: 20, bold: true, color: '2563EB' });
+                slide2.addText("NIK: 10076544  |  Dept: SULAMAL  |  Divisi: Operation", { x: 0.5, y: 2.0, fontSize: 14, color: '64748B' });
+                
+                slide2.addText("Career Path:", { x: 0.5, y: 3.0, fontSize: 16, bold: true });
+                const careerPath = [
+                    { text: "2025 - Sekarang: SSC Acting", options: { fontSize: 12, bullet: true } },
+                    { text: "2023 - 2025: SSL (Leader)", options: { fontSize: 12, bullet: true } },
+                    { text: "2022 - 2023: SSA (Admin)", options: { fontSize: 12, bullet: true } },
+                    { text: "2020 - 2022: Operator LH25", options: { fontSize: 12, bullet: true } },
+                ];
+                slide2.addText(careerPath, { x: 0.5, y: 3.5, w: 5, h: 2 });
+
+                // SLIDE 3: BACKGROUND & DATA
+                const slide3 = addSlide("Background & Performance Trend");
+                slide3.addText("Executive Summary:", { x: 0.5, y: 1.3, fontSize: 14, bold: true, color: 'EF4444' });
+                slide3.addText("Pencapaian SLA menurun dari 90.99% (Sep) menjadi 87.19% (Nov). Load stabil di 3.700+ paket.", { x: 0.5, y: 1.7, w: '90%', fontSize: 12 });
+                
+                if(bgChart) {
+                    try {
+                        const img = bgChart.toBase64Image();
+                        slide3.addImage({ data: img, x: 0.5, y: 2.5, w: 9, h: 4.5 });
+                    } catch(e) { console.log("Chart image err", e); }
+                }
+
+                // SLIDE 4: PARETO ANALYSIS
+                const slide4 = addSlide("Pareto Analysis (80/20 Rule)");
+                slide4.addText("Insight Utama:", { x: 6.5, y: 1.5, fontSize: 14, bold: true });
+                slide4.addText("• 96.67% masalah berasal dari REG (75%) dan SD (21%).\n• Fokus perbaikan pada dua service ini.", { x: 6.5, y: 2.0, w: 3, fontSize: 12, color: '334155' });
+
+                if(paretoChart) {
+                    try {
+                        const img = paretoChart.toBase64Image();
+                        slide4.addImage({ data: img, x: 0.5, y: 1.5, w: 5.5, h: 4.5 });
+                    } catch(e) {}
+                }
+
+                // SLIDE 5: ROOT CAUSE SUMMARY
+                const slide5 = addSlide("Analisa Akar Masalah (Summary)");
+                
+                // Box 1: MAN
+                slide5.addShape(pptx.ShapeType.rect, { x: 0.5, y: 1.5, w: 2.8, h: 3, fill: 'EFF6FF', line: { color: '2563EB', width: 2 } });
+                slide5.addText("MAN", { x: 0.5, y: 1.6, w: 2.8, align: 'center', bold: true, color: '2563EB' });
+                slide5.addText("- Kurang Disiplin Task List\n- Monitoring Belum Optimal", { x: 0.6, y: 2.2, w: 2.6, fontSize: 11 });
+
+                // Box 2: METHOD
+                slide5.addShape(pptx.ShapeType.rect, { x: 3.6, y: 1.5, w: 2.8, h: 3, fill: 'F5F3FF', line: { color: '8B5CF6', width: 2 } });
+                slide5.addText("METHOD", { x: 3.6, y: 1.6, w: 2.8, align: 'center', bold: true, color: '8B5CF6' });
+                slide5.addText("- Rute statis (Tidak adaptif macet)\n- Checkpoint kurang ketat", { x: 3.7, y: 2.2, w: 2.6, fontSize: 11 });
+
+                // Box 3: ENV
+                slide5.addShape(pptx.ShapeType.rect, { x: 6.7, y: 1.5, w: 2.8, h: 3, fill: 'FEF2F2', line: { color: 'EF4444', width: 2 } });
+                slide5.addText("ENVIRONMENT", { x: 6.7, y: 1.6, w: 2.8, align: 'center', bold: true, color: 'EF4444' });
+                slide5.addText("- Traffic Jam (16:00-18:00)\n- Area padat", { x: 6.8, y: 2.2, w: 2.6, fontSize: 11 });
+
+                // SLIDE 6: TARGET
+                const slide6 = addSlide("Target Project (SMART)");
+                slide6.addText("Target Utama: SLA Pickup ≥ 95% (Feb 2026)", { x: 0.5, y: 1.5, fontSize: 16, bold: true, color: '10B981' });
+                
+                const smartRows = [
+                    ['S', 'Specific', 'Optimasi pickup SS PRPO0 (Man & Method)'],
+                    ['M', 'Measurable', 'Kenaikan SLA +9% & Miss < 5%'],
+                    ['A', 'Achievable', 'Tanpa penambahan manpower'],
+                    ['R', 'Relevant', 'Cegah double cost & merchant churn'],
+                    ['T', 'Time-bound', 'Februari 2026']
+                ];
+                slide6.addTable(smartRows, { x: 0.5, y: 2.2, w: 5, fontSize: 10, border: { pt: 1, color: 'E2E8F0' }, headerStyles: { fill: '10B981', color: 'FFFFFF' } });
+
+                if(targetChart) {
+                    try {
+                        const img = targetChart.toBase64Image();
+                        slide6.addImage({ data: img, x: 6, y: 2.2, w: 3.5, h: 2.5 });
+                    } catch(e) {}
+                }
+
+                // SLIDE 7: ACTION PLAN
+                const slide7 = addSlide("Countermeasure Plan");
+                const actionRows = [
+                    ['Faktor', 'Akar Masalah', 'Tindakan Perbaikan', 'PIC'],
+                    ['MAN', 'Kurang Disiplin', 'Briefing Pagi & Cek Dashboard per 2 Jam', 'Leader'],
+                    ['METHOD', 'Rute Statis', 'Dynamic Rerouting (Hindari Macet)', 'SSC'],
+                    ['MAT', 'Paket Belum Siap', 'Validasi Pre-call WA Merchant', 'Admin'],
+                    ['MACH', 'App Latency', 'Eskalasi Tiket IT Support', 'IT']
+                ];
+                slide7.addTable(actionRows, { 
+                    x: 0.5, y: 1.5, w: '90%', fontSize: 11, 
+                    border: { pt: 1, color: 'CBD5E1' },
+                    headerStyles: { fill: '2563EB', color: 'FFFFFF', bold: true },
+                    rowStyles: [ { fill: 'F8FAFC' }, { fill: 'FFFFFF' } ]
+                });
+
+                // SLIDE 8: CLOSING
+                const slide8 = pptx.addSlide();
+                slide8.background = { color: 'F1F5F9' };
+                slide8.addText("TERIMA KASIH", { x: 0, y: 2.5, w: '100%', align: 'center', fontSize: 32, bold: true, color: '2563EB' });
+                
+                slide8.addShape(pptx.ShapeType.line, { x: 3, y: 3.5, w: 4, h: 0, line: { color: '94A3B8', width: 2 } });
+                
+                slide8.addText("Approved By:", { x: 0, y: 4.5, w: '100%', align: 'center', fontSize: 14, color: '64748B' });
+                slide8.addText("Nasrullah (SSC)  |  Asri Yadi (AM)  |  Wahyudi (RM)", { x: 0, y: 5.0, w: '100%', align: 'center', fontSize: 16, bold: true });
+
+                // Save
+                await pptx.writeFile({ fileName: "Proposal_SLA_Improvement_Nasrullah.pptx" });
+                
+            } catch (error) {
+                alert("Gagal membuat PPT: " + error.message);
+                console.error(error);
+            } finally {
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // --- IMAGE URL INPUT LOGIC ---
+        function updateImageFromUrl(element) {
+            const url = prompt("Masukkan Link URL Foto (contoh: https://example.com/foto.jpg):");
+            
+            if (url) {
+                const img = element.querySelector('.gallery-img-preview');
+                if(img) {
+                    // Set src ke URL yang diberikan
+                    img.src = url;
+                    
+                    // Tampilkan gambar jika berhasil load
+                    img.onload = function() {
+                        element.classList.add('has-image');
+                    };
+                    
+                    // Error handling jika link rusak
+                    img.onerror = function() {
+                        alert("Link foto tidak valid atau tidak dapat diakses. Pastikan link berakhiran .jpg/.png atau direct link gambar.");
+                        element.classList.remove('has-image');
+                        img.src = ""; // Reset
+                    };
+                }
+            }
+        }
+    </script>
+</body>
+</html>
