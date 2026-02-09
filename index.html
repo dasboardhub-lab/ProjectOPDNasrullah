@@ -625,7 +625,10 @@
         <div id="hero" class="content-section active">
             <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:80vh; text-align:center;">
                 <span class="badge">Operational Excellence 2025</span>
-                <h1 style="max-width:900px;">Perbaikan SLA SS PRPO0 untuk mencapai SLA 95% Pickup Inprovment</h1>
+                <h1 style="max-width:900px;">Peningkatan SLA Pickup SS PRPO0: Menuju Target 95%</h1>
+                <p style="font-size:1.4rem; max-width:700px; margin-bottom:40px;">
+                    Optimasi Operasional SS PRPO0 untuk mencapai stabilitas SLA > 95%
+                </p>
                 <div style="display:flex; gap:15px;">
                     <button onclick="switchTab('profile')" class="btn-primary">View Strategy</button>
                     <button onclick="switchTab('target-project')" style="padding:16px 30px; background:var(--bg-surface); border:1px solid var(--border-color); color:var(--text-main); border-radius:50px; cursor:pointer; font-weight:600;">Check Targets</button>
@@ -800,14 +803,14 @@
                 <div class="table-responsive">
                     <table class="data-table">
                         <thead>
-                            <tr><th>Service</th><th>Miss</th><th>Miss/Hr</th><th>Tot Kontribusi</th><th>Kontribusi (%)</th><th>Kumulatif (%)</th></tr>
+                            <tr><th>Service</th><th>Jumlah Miss</th><th>Kontribusi (%)</th><th>Kumulatif (%)</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td><strong>REG</strong></td><td>450</td><td>450</td><td><strong>900</strong></td><td>75.00%</td><td>75.00%</td></tr>
-                            <tr><td><strong>SD</strong></td><td>130</td><td>130</td><td><strong>260</strong></td><td>21.67%</td><td>96.67%</td></tr>
-                            <tr><td><strong>ECO</strong></td><td>20</td><td>20</td><td><strong>40</strong></td><td>3.33%</td><td>100%</td></tr>
-                            <tr><td>BIG</td><td>0</td><td>0</td><td>0</td><td>0%</td><td>100%</td></tr>
-                            <tr><td>ND</td><td>0</td><td>0</td><td>0</td><td>0%</td><td>100%</td></tr>
+                            <tr><td><strong>REG</strong></td><td>555</td><td>56.86%</td><td>56.86%</td></tr>
+                            <tr><td><strong>SD</strong></td><td>407</td><td>41.70%</td><td>98.56%</td></tr>
+                            <tr><td><strong>ECO</strong></td><td>11</td><td>1.13%</td><td>99.69%</td></tr>
+                            <tr><td><strong>ND</strong></td><td>3</td><td>0.31%</td><td>100.00%</td></tr>
+                            <tr><td>BIG</td><td>0</td><td>0.00%</td><td>100.00%</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -816,7 +819,7 @@
             <div class="card" style="background: linear-gradient(to right, var(--bg-surface), #fff0f9); border-left: 5px solid var(--pareto-bar); margin-top: 20px;">
                 <h3><i class="fas fa-microscope" style="color:var(--pareto-bar);"></i> Insight & Rekomendasi Strategis</h3>
                 <ul style="padding-left: 20px; line-height: 1.8;">
-                    <li style="margin-bottom: 10px;"><strong>Hukum Pareto (80/20):</strong> Data menunjukkan <strong>96.67%</strong> masalah SLA berasal dari <strong>REG (75%)</strong> dan <strong>SD (21.67%)</strong>.</li>
+                    <li style="margin-bottom: 10px;"><strong>Hukum Pareto (80/20):</strong> Data menunjukkan <strong>98.56%</strong> masalah SLA berasal dari <strong>REG (56.86%)</strong> dan <strong>SD (41.70%)</strong>.</li>
                     <li style="margin-bottom: 10px;"><strong>Strategi REG (High Volume):</strong> Fokus pada efisiensi rute dan validasi pra-pickup.</li>
                     <li style="margin-bottom: 10px;"><strong>Strategi SD (Time Sensitive):</strong> Fokus pada kedisiplinan jam (Miss By Hour) dengan Checkpoint per 2 Jam.</li>
                 </ul>
@@ -1353,6 +1356,27 @@
             const targetCanvas = document.getElementById('targetChart');
             const evalCanvas = document.getElementById('evalChart');
 
+            // Konfigurasi opsi bersih (Tanpa Sumbu Y)
+            const cleanChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { 
+                    legend: { position: 'bottom', labels: { color: textColor, padding: 20, usePointStyle: true } },
+                    datalabels: {
+                        display: true,
+                        font: { weight: 'bold', size: 11 },
+                        offset: 4
+                    }
+                },
+                scales: {
+                    y: { display: false, grid: { display: false } }, // Hilangkan Sumbu Y Kiri
+                    y1: { display: false, grid: { display: false } }, // Hilangkan Sumbu Y Kanan
+                    x: { grid: { display: false }, ticks: { color: textColor, font: { weight: '600' } } }
+                },
+                layout: { padding: { top: 25 } }
+            };
+
             // --- BACKGROUND PROJECT MIXED CHART ---
             if (bgCanvas) {
                 const ctxBg = bgCanvas.getContext('2d');
@@ -1368,13 +1392,12 @@
                                 borderColor: isDark ? '#60A5FA' : '#2563EB',
                                 borderWidth: 1,
                                 yAxisID: 'y',
+                                borderRadius: 4,
+                                order: 2,
                                 datalabels: {
                                     anchor: 'end',
-                                    align: 'top',
-                                    color: textColor,
-                                    backgroundColor: isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)', 
-                                    borderRadius: 4,
-                                    padding: 6,
+                                    align: 'end',
+                                    color: isDark ? '#60A5FA' : '#2563EB',
                                     font: { weight: 'bold' },
                                     formatter: Math.round
                                 }
@@ -1388,15 +1411,17 @@
                                 borderWidth: 3,
                                 pointRadius: 5,
                                 pointBackgroundColor: pointBg,
+                                pointBorderWidth: 2,
                                 yAxisID: 'y1',
                                 tension: 0.1,
+                                order: 1,
                                 datalabels: {
-                                    anchor: 'end',
+                                    anchor: 'top',
                                     align: 'top',
                                     color: '#FFFFFF', 
                                     backgroundColor: '#EF4444', 
                                     borderRadius: 4,
-                                    padding: 6,
+                                    padding: 4,
                                     font: { weight: 'bold' },
                                     formatter: function(value) { return value + '%' }
                                 }
@@ -1414,19 +1439,7 @@
                             }
                         ]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        plugins: { 
-                            legend: { position: 'bottom', labels: { color: textColor } }
-                        },
-                        scales: {
-                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Total Load', color: textColor }, grid: { color: gridColor }, ticks: { color: textColor } },
-                            y1: { type: 'linear', display: true, position: 'right', min: 80, max: 105, title: { display: true, text: 'SLA (%)', color: textColor }, grid: { drawOnChartArea: false }, ticks: { color: textColor } },
-                            x: { grid: { display: false }, ticks: { color: textColor } }
-                        }
-                    }
+                    options: cleanChartOptions // Gunakan opsi bersih
                 });
             }
 
@@ -1448,8 +1461,8 @@
                                 order: 2,
                                 datalabels: {
                                     anchor: 'end',
-                                    align: 'top',
-                                    color: textColor,
+                                    align: 'end',
+                                    color: '#BF007F', // Warna teks sesuai warna batang
                                     font: { weight: 'bold' }
                                 }
                             },
@@ -1466,44 +1479,19 @@
                                 order: 1,
                                 tension: 0.1,
                                 datalabels: {
-                                    anchor: 'end',
-                                    align: 'right',
-                                    color: '#D4B300', 
+                                    anchor: 'start',
+                                    align: 'bottom', // Geser ke bawah agar tidak tabrakan
+                                    color: '#B45309', 
+                                    backgroundColor: '#FEF3C7',
+                                    borderRadius: 4,
+                                    padding: 4,
                                     font: { weight: 'bold', size: 10 },
                                     formatter: function(value) { return Math.round(value) + '%' }
                                 }
                             }
                         ]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: textColor } },
-                        },
-                        scales: {
-                            y: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: { display: true, text: 'Total Kontribusi', color: textColor },
-                                grid: { color: gridColor },
-                                ticks: { color: textColor }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                min: 0,
-                                max: 110,
-                                title: { display: true, text: 'Kumulatif (%)', color: textColor },
-                                grid: { drawOnChartArea: false },
-                                ticks: { color: textColor, callback: function(value) { return value + "%" } }
-                            },
-                            x: { grid: { display: false }, ticks: { color: textColor } }
-                        }
-                    }
+                    options: cleanChartOptions // Gunakan opsi bersih
                 });
             }
 
@@ -1545,22 +1533,14 @@
                         ]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom', labels: { color: textColor } },
-                            tooltip: { mode: 'index', intersect: false }
-                        },
+                        ...cleanChartOptions, // Gunakan opsi bersih dasar
                         scales: {
+                            ...cleanChartOptions.scales,
                             y: { 
-                                min: 85, max: 100, 
-                                grid: { color: gridColor, borderDash: [5, 5] },
-                                ticks: { color: textColor }
-                            },
-                            x: { 
-                                grid: { display: false },
-                                ticks: { color: textColor }
-                            }
+                                display: false, // Sembunyikan Sumbu Y
+                                min: 85, 
+                                max: 100 // Jaga proporsi grafik
+                            } 
                         }
                     }
                 });
@@ -1582,9 +1562,13 @@
                                 borderWidth: 3,
                                 pointRadius: 6,
                                 pointBackgroundColor: pointBg,
+                                pointBorderWidth: 2,
                                 datalabels: {
                                     align: 'top',
-                                    color: textColor,
+                                    color: isDark ? '#60A5FA' : '#2563EB',
+                                    backgroundColor: isDark ? 'rgba(15, 23, 42, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                                    borderRadius: 4,
+                                    padding: 4,
                                     font: { weight: 'bold' },
                                     formatter: (value) => value + '%'
                                 }
@@ -1600,7 +1584,17 @@
                             }
                         ]
                     },
-                    options: getCommonOptions(gridColor, textColor)
+                    options: {
+                        ...cleanChartOptions, // Gunakan opsi bersih dasar
+                        scales: {
+                            ...cleanChartOptions.scales,
+                            y: { 
+                                display: false, // Sembunyikan Sumbu Y
+                                min: 80, 
+                                max: 105 // Jaga proporsi grafik (80-100 range)
+                            } 
+                        }
+                    }
                 });
             }
         }
@@ -1714,7 +1708,7 @@
                 slide1.background = { color: 'F8FAFC' };
                 slide1.addText("Operational Excellence 2025", { x: 0, y: 2.2, w: '100%', align: 'center', fontSize: 14, color: '64748B', spacing: {line: 20} });
                 slide1.addText("STRATEGIC PROPOSAL:\nSLA PICKUP IMPROVEMENT", { x: 1, y: 2.8, w: '80%', align: 'center', fontSize: 36, bold: true, color: '1E293B' });
-                slide1.addText("Optimasi Operasional SULAMAL untuk mencapai SLA > 95%", { x: 0, y: 4.5, w: '100%', align: 'center', fontSize: 18, color: '2563EB' });
+                slide1.addText("Optimasi Operasional SS PRPO0 untuk mencapai SLA > 95%", { x: 0, y: 4.5, w: '100%', align: 'center', fontSize: 18, color: '2563EB' });
                 
                 // Kotak Nama
                 slide1.addShape(pptx.ShapeType.rect, { x: 3.5, y: 5.5, w: 3, h: 1.2, fill: 'FFFFFF', line: { color: 'E2E8F0' } });
